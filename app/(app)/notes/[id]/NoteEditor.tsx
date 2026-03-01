@@ -1,5 +1,6 @@
 'use client';
 
+import { TipTapEditor } from '@/components/editor/TipTapEditor';
 import { SaveStatus, useAutosave } from '@/hooks/useAutosave';
 import { useNoteStream } from '@/hooks/useNoteStream';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -95,16 +96,15 @@ export default function NoteEditor({ note }: NoteEditorProps) {
         />
 
         {/* Content */}
-        <textarea
-          value={content}
-          onChange={(e) => {
-            setContent(e.target.value);
-            save({ content: e.target.value });
-          }}
-          placeholder="Start writing…"
-          className="flex-1 w-full bg-transparent text-zinc-300 placeholder-zinc-700 outline-none resize-none text-sm leading-7 border-none min-h-[300px] xl:min-h-0"
-          autoFocus
-        />
+        <div className="flex-1 mt-4">
+          <TipTapEditor
+            initialContent={content}
+            onChange={(html: string) => {
+              setContent(html);
+              save({ content: html });
+            }}
+          />
+        </div>
       </motion.div>
 
       {/* AI panel */}
