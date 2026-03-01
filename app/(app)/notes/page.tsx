@@ -57,7 +57,7 @@ export default async function NotesPage() {
   const createNoteWithUser = createNote.bind(null, session.user.id);
 
   return (
-    <div className="p-8 max-w-3xl mx-auto">
+    <div className="p-4 sm:p-8 max-w-3xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>

@@ -52,9 +52,9 @@ export default function NoteEditor({ note }: NoteEditorProps) {
   const isAiFailed = stream.status === 'failed' || note.status === 'failed';
 
   return (
-    <div className="flex h-full">
+    <div className="flex flex-col xl:flex-row h-full overflow-y-auto xl:overflow-hidden">
       {/* Editor area */}
-      <div className="flex-1 flex flex-col p-8 max-w-2xl mx-auto w-full">
+      <div className="flex-1 flex flex-col p-4 sm:p-8 max-w-2xl mx-auto w-full min-h-[500px] xl:min-h-0 xl:overflow-y-auto shrink-0 xl:shrink">
         {/* Status bar */}
         <div className="flex items-center justify-between mb-6">
           <span
@@ -95,13 +95,13 @@ export default function NoteEditor({ note }: NoteEditorProps) {
             save({ content: e.target.value });
           }}
           placeholder="Start writing…"
-          className="flex-1 w-full bg-transparent text-zinc-300 placeholder-zinc-700 outline-none resize-none text-sm leading-7 border-none"
+          className="flex-1 w-full bg-transparent text-zinc-300 placeholder-zinc-700 outline-none resize-none text-sm leading-7 border-none min-h-[300px] xl:min-h-0"
           autoFocus
         />
       </div>
 
       {/* AI panel */}
-      <aside className="w-72 shrink-0 border-l border-zinc-800 p-6 space-y-6 overflow-auto">
+      <aside className="w-full xl:w-72 shrink-0 border-t xl:border-t-0 xl:border-l border-zinc-800 p-4 sm:p-6 space-y-6 overflow-y-auto">
         <div>
           <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">
             AI Summary

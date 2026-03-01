@@ -32,7 +32,7 @@ export default async function NotePage({
   return (
     <div className="flex flex-col h-full">
       {/* Top bar */}
-      <div className="border-b border-zinc-800 px-6 py-3 flex items-center gap-4">
+      <div className="border-b border-zinc-800 px-4 sm:px-6 py-3 flex items-center gap-4">
         <Link
           href="/notes"
           className="text-xs text-zinc-500 hover:text-white transition-colors">
