@@ -1,4 +1,5 @@
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { HeroIllustration } from '@/components/motion/HeroIllustration';
 import {
   StaggerContainer,
   StaggerItem,
@@ -12,8 +13,10 @@ export default async function LandingPage() {
   if (session?.user) redirect('/notes');
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-zinc-950 text-white px-6">
-      <StaggerContainer className="max-w-lg text-center space-y-6">
+    <main className="min-h-screen relative flex flex-col items-center justify-center bg-zinc-950 text-white px-6 overflow-hidden">
+      <HeroIllustration />
+
+      <StaggerContainer className="relative z-10 max-w-lg text-center space-y-6">
         <StaggerItem>
           <div className="inline-flex items-center gap-2 bg-zinc-800 border border-zinc-700 text-zinc-400 text-xs px-3 py-1 rounded-full mb-4">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -87,7 +90,7 @@ export default async function LandingPage() {
 
       {/* Feature highlights */}
       <StaggerContainer
-        className="mt-20 grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-2xl w-full text-left"
+        className="relative z-10 mt-20 grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-2xl w-full text-left"
         delayChildren={0.4}>
         {[
           {
