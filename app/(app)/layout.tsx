@@ -49,19 +49,12 @@ export default async function AppLayout({
               {session.user.email}
             </p>
           </div>
-          <form
-            action={async () => {
-              'use server';
-              // signOut requires client side form in v4, replacing with simple API redirect
-            }}>
-            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-            <a
-              href="/api/auth/signout"
-              className="text-xs text-zinc-500 hover:text-white transition-colors"
-              title="Sign out">
-              ↩
-            </a>
-          </form>
+          <Link
+            href="/logout"
+            className="flex items-center gap-3 px-3 py-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors group"
+            title="Sign out">
+            ↩
+          </Link>
         </div>
       </aside>
 

@@ -28,6 +28,7 @@ export const authOptions = {
   secret: process.env.AUTH_SECRET,
   pages: {
     signIn: '/login',
+    signOut: '/logout',
   },
 };
 
