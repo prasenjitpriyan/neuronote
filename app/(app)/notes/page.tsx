@@ -7,6 +7,7 @@ import {
 } from '@/components/motion/MotionWrappers';
 import { prisma } from '@/lib/prisma';
 import { Prisma } from '@prisma/client';
+import { NotebookPen } from 'lucide-react';
 import { getServerSession } from 'next-auth';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -137,7 +138,12 @@ export default async function NotesPage({
       {notes.length === 0 && (
         <FadeIn delay={0.3}>
           <div className="text-center py-24 text-zinc-600">
-            <p className="text-4xl mb-3">📝</p>
+            <div className="flex justify-center mb-6">
+              <NotebookPen
+                className="w-12 h-12 text-zinc-700 animate-pulse"
+                strokeWidth={1}
+              />
+            </div>
             <p className="text-sm">
               {q ||
               (tagFilter && tagFilter !== 'all') ||

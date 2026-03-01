@@ -3,6 +3,7 @@ import {
   StaggerContainer,
   StaggerItem,
 } from '@/components/motion/MotionWrappers';
+import { BrainCircuit, Search, Zap } from 'lucide-react';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 
@@ -90,23 +91,29 @@ export default async function LandingPage() {
         delayChildren={0.4}>
         {[
           {
-            icon: '⚡',
+            icon: (
+              <Zap className="w-8 h-8 text-emerald-400 group-hover:scale-110 group-hover:text-emerald-300 transition-all duration-300" />
+            ),
             title: 'Instant save',
             desc: 'Notes autosave as you type. Never lose a thought.',
           },
           {
-            icon: '🧠',
+            icon: (
+              <BrainCircuit className="w-8 h-8 text-blue-400 group-hover:scale-110 group-hover:text-blue-300 transition-all duration-300" />
+            ),
             title: 'AI in background',
             desc: 'Summary & tags generated async — never blocks you.',
           },
           {
-            icon: '🔍',
+            icon: (
+              <Search className="w-8 h-8 text-purple-400 group-hover:scale-110 group-hover:text-purple-300 transition-all duration-300" />
+            ),
             title: 'Semantic search',
             desc: 'Vector embeddings power natural language search.',
           },
         ].map((f) => (
           <StaggerItem key={f.title}>
-            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-2 h-full">
+            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5 space-y-3 h-full group hover:border-zinc-700 transition-colors cursor-default">
               <div className="text-2xl">{f.icon}</div>
               <h3 className="font-semibold text-white text-sm">{f.title}</h3>
               <p className="text-xs text-zinc-500 leading-relaxed">{f.desc}</p>

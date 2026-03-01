@@ -1,5 +1,6 @@
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { SlideIn } from '@/components/motion/MotionWrappers';
+import { LogOut, NotebookPen } from 'lucide-react';
 import { getServerSession } from 'next-auth';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -32,7 +33,7 @@ export default async function AppLayout({
           <Link
             href="/notes"
             className="hidden sm:flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-zinc-800 whitespace-nowrap">
-            <span>📝</span> All notes
+            <NotebookPen className="w-4 h-4" /> All notes
           </Link>
         </nav>
 
@@ -58,7 +59,7 @@ export default async function AppLayout({
             href="/logout"
             className="flex items-center justify-center p-2 md:px-3 md:py-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors group"
             title="Sign out">
-            ↩
+            <LogOut className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
           </Link>
         </div>
       </SlideIn>

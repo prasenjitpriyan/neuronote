@@ -3,6 +3,7 @@
 import { SaveStatus, useAutosave } from '@/hooks/useAutosave';
 import { useNoteStream } from '@/hooks/useNoteStream';
 import { AnimatePresence, motion } from 'framer-motion';
+import { BrainCircuit, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 
 interface NoteEditorProps {
@@ -67,15 +68,16 @@ export default function NoteEditor({ note }: NoteEditorProps) {
             {statusLabel[saveStatus]}
           </span>
           {saveStatus === 'processing' && (
-            <span className="text-xs text-amber-400 animate-pulse">
-              🧠 AI is summarizing…
+            <span className="text-xs text-amber-400 animate-pulse flex items-center">
+              <BrainCircuit className="w-3.5 h-3.5 mr-1.5" /> AI is summarizing…
             </span>
           )}
           {isAiReady &&
             saveStatus !== 'saving' &&
             saveStatus !== 'processing' && (
-              <span className="text-xs text-emerald-400">
-                ✨ AI processing complete
+              <span className="text-xs text-emerald-400 flex items-center">
+                <Sparkles className="w-3.5 h-3.5 mr-1.5" /> AI processing
+                complete
               </span>
             )}
         </div>
