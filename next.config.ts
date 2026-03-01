@@ -1,7 +1,12 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ['bullmq', 'ioredis'],
+  serverExternalPackages: [
+    'bullmq',
+    'ioredis',
+    '@neondatabase/serverless',
+    '@prisma/adapter-neon',
+  ],
 };
 
 export default nextConfig;
