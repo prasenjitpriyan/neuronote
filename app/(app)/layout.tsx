@@ -1,4 +1,5 @@
-import { auth, signOut } from '@/auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { getServerSession } from 'next-auth';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
@@ -7,7 +8,7 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
+  const session = await getServerSession(authOptions);
   if (!session?.user) redirect('/');
 
   return (
@@ -51,14 +52,15 @@ export default async function AppLayout({
           <form
             action={async () => {
               'use server';
-              await signOut();
+              // signOut requires client side form in v4, replacing with simple API redirect
             }}>
-            <button
-              type="submit"
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+            <a
+              href="/api/auth/signout"
               className="text-xs text-zinc-500 hover:text-white transition-colors"
               title="Sign out">
               ↩
-            </button>
+            </a>
           </form>
         </div>
       </aside>

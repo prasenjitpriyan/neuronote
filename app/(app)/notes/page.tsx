@@ -1,5 +1,6 @@
-import { auth } from '@/auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
+import { getServerSession } from 'next-auth';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
@@ -37,7 +38,7 @@ async function createNote(userId: string) {
 }
 
 export default async function NotesPage() {
-  const session = await auth();
+  const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect('/');
 
   const notes = await prisma.note.findMany({

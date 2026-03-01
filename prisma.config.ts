@@ -11,6 +11,7 @@ export default defineConfig({
   },
   datasource: {
     // DIRECT_DATABASE_URL is needed for migrations (Accelerate URL won't work for migrate)
-    url: process.env['DIRECT_DATABASE_URL'] ?? process.env['DATABASE_URL'],
+    url: (process.env['DIRECT_DATABASE_URL'] ??
+      process.env['DATABASE_URL']) as string,
   },
 });

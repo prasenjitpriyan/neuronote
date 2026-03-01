@@ -72,6 +72,7 @@ const worker = new Worker(
     sseEmitter.emit(`note:${noteId}`, { summary, tags, status: 'completed' });
   },
   {
+    // @ts-expect-error bullmq and ioredis type mismatch
     connection: redisConnection,
     concurrency: 5,
   }

@@ -1,8 +1,9 @@
-import { auth, signIn } from '@/auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 
 export default async function LandingPage() {
-  const session = await auth();
+  const session = await getServerSession(authOptions);
   if (session?.user) redirect('/notes');
 
   return (
@@ -22,11 +23,7 @@ export default async function LandingPage() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
-          <form
-            action={async () => {
-              'use server';
-              await signIn('github');
-            }}>
+          <form action="/api/auth/signin/github" method="POST">
             <button
               type="submit"
               className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white text-black font-semibold px-6 py-3 rounded-xl hover:bg-zinc-100 transition-colors">
@@ -37,11 +34,7 @@ export default async function LandingPage() {
             </button>
           </form>
 
-          <form
-            action={async () => {
-              'use server';
-              await signIn('google');
-            }}>
+          <form action="/api/auth/signin/google" method="POST">
             <button
               type="submit"
               className="w-full sm:w-auto flex items-center justify-center gap-2 bg-zinc-800 border border-zinc-700 text-white font-semibold px-6 py-3 rounded-xl hover:bg-zinc-700 transition-colors">

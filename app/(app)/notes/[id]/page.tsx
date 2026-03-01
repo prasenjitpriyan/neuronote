@@ -1,5 +1,6 @@
-import { auth } from '@/auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
+import { getServerSession } from 'next-auth';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import NoteEditor from './NoteEditor';
@@ -9,7 +10,7 @@ export default async function NotePage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const session = await auth();
+  const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect('/');
 
   const { id } = await params;

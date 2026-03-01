@@ -15,6 +15,7 @@ export const redisConnection = new IORedis(
 
 // ─── Queue ────────────────────────────────────────────────────────────────────
 export const noteQueue = new Queue('note-ai-processing', {
+  // @ts-expect-error bullmq and ioredis type mismatch
   connection: redisConnection,
   defaultJobOptions: {
     attempts: 3,

@@ -1,6 +1,7 @@
-import { auth } from '@/auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
 import { sseEmitter } from '@/worker/noteWorker';
+import { getServerSession } from 'next-auth';
 import { NextRequest } from 'next/server';
 
 // GET /api/notes/[id]/stream — Server-Sent Events for real-time AI updates
@@ -8,7 +9,7 @@ export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await auth();
+  const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return new Response('Unauthorized', { status: 401 });
   }
