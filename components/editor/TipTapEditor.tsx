@@ -1,9 +1,14 @@
 'use client';
 
 import Placeholder from '@tiptap/extension-placeholder';
-import { EditorContent, useEditor } from '@tiptap/react';
+import TextAlign from '@tiptap/extension-text-align';
+import { Editor, EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import {
+  AlignCenter,
+  AlignJustify,
+  AlignLeft,
+  AlignRight,
   Bold,
   Code,
   Heading1,
@@ -21,7 +26,7 @@ interface TipTapEditorProps {
   editable?: boolean;
 }
 
-const MenuBar = ({ editor }: { editor: any }) => {
+const MenuBar = ({ editor }: { editor: Editor | null }) => {
   if (!editor) {
     return null;
   }
@@ -71,6 +76,31 @@ const MenuBar = ({ editor }: { editor: any }) => {
       </button>
       <div className="w-px h-4 bg-zinc-700 mx-1" />
       <button
+        onClick={() => editor.chain().focus().setTextAlign('left').run()}
+        className={toggleClasses(editor.isActive({ textAlign: 'left' }))}
+        title="Align Left">
+        <AlignLeft className="w-4 h-4" />
+      </button>
+      <button
+        onClick={() => editor.chain().focus().setTextAlign('center').run()}
+        className={toggleClasses(editor.isActive({ textAlign: 'center' }))}
+        title="Align Center">
+        <AlignCenter className="w-4 h-4" />
+      </button>
+      <button
+        onClick={() => editor.chain().focus().setTextAlign('right').run()}
+        className={toggleClasses(editor.isActive({ textAlign: 'right' }))}
+        title="Align Right">
+        <AlignRight className="w-4 h-4" />
+      </button>
+      <button
+        onClick={() => editor.chain().focus().setTextAlign('justify').run()}
+        className={toggleClasses(editor.isActive({ textAlign: 'justify' }))}
+        title="Justify">
+        <AlignJustify className="w-4 h-4" />
+      </button>
+      <div className="w-px h-4 bg-zinc-700 mx-1" />
+      <button
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         className={toggleClasses(editor.isActive('bulletList'))}
         title="Bullet List">
@@ -107,6 +137,9 @@ export function TipTapEditor({
     immediatelyRender: false,
     extensions: [
       StarterKit,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }),
       Placeholder.configure({
         placeholder: 'Start writing...',
         emptyEditorClass: 'is-editor-empty',
