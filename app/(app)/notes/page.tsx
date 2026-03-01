@@ -1,4 +1,5 @@
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { AnimatedDivider } from '@/components/motion/AnimatedDivider';
 import {
   FadeIn,
   SlideUp,
@@ -130,6 +131,8 @@ export default async function NotesPage({
         </SlideUp>
       </div>
 
+      <AnimatedDivider className="my-6" />
+
       <FadeIn delay={0.2}>
         <SearchNotes availableTags={availableTags} />
       </FadeIn>
@@ -203,6 +206,8 @@ export default async function NotesPage({
                   }).format(new Date(note.updatedAt))}
                 </p>
               </Link>
+              {/* Animated Divider replacing existing layout lines or adding them uniformly */}
+              <AnimatedDivider className="mt-6 mb-2" />
             </StaggerItem>
           );
         })}
