@@ -1,8 +1,10 @@
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import SearchNotes from './SearchNotes';
 
 type NoteListItem = {
   id: string;
@@ -37,12 +39,46 @@ async function createNote(userId: string) {
   redirect(`/notes/${note.id}`);
 }
 
-export default async function NotesPage() {
+export default async function NotesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) redirect('/');
 
+  const params = await searchParams;
+  const q = typeof params.q === 'string' ? params.q : '';
+  const tagFilter = typeof params.tag === 'string' ? params.tag : '';
+  const statusFilter = typeof params.status === 'string' ? params.status : '';
+
+  // Build the Prisma where clause dynamically based on searchParams
+  const whereClause: Prisma.NoteWhereInput = {
+    userId: session.user.id,
+  };
+
+  if (q) {
+    whereClause.OR = [
+      { title: { contains: q, mode: 'insensitive' } },
+      { content: { contains: q, mode: 'insensitive' } },
+      { summary: { contains: q, mode: 'insensitive' } },
+    ];
+  }
+
+  if (tagFilter && tagFilter !== 'all') {
+    whereClause.tags = {
+      has: tagFilter,
+    };
+  }
+
+  if (statusFilter && statusFilter !== 'all') {
+    // Explicit cast since we know status is limited
+    whereClause.status = statusFilter as Prisma.EnumNoteStatusFilter;
+  }
+
+  // Fetch filtered notes
   const notes = await prisma.note.findMany({
-    where: { userId: session.user.id },
+    where: whereClause,
     select: {
       id: true,
       title: true,
@@ -53,6 +89,16 @@ export default async function NotesPage() {
     },
     orderBy: { updatedAt: 'desc' },
   });
+
+  // Fetch unique tags across all user notes entirely for the filter dropdown
+  const allUserNotes = await prisma.note.findMany({
+    where: { userId: session.user.id },
+    select: { tags: true },
+  });
+
+  const availableTags = Array.from(
+    new Set(allUserNotes.flatMap((n) => n.tags))
+  ).sort();
 
   const createNoteWithUser = createNote.bind(null, session.user.id);
 
@@ -75,11 +121,19 @@ export default async function NotesPage() {
         </form>
       </div>
 
+      <SearchNotes availableTags={availableTags} />
+
       {/* Empty state */}
       {notes.length === 0 && (
         <div className="text-center py-24 text-zinc-600">
           <p className="text-4xl mb-3">📝</p>
-          <p className="text-sm">No notes yet. Create your first one!</p>
+          <p className="text-sm">
+            {q ||
+            (tagFilter && tagFilter !== 'all') ||
+            (statusFilter && statusFilter !== 'all')
+              ? 'No notes match your search criteria.'
+              : 'No notes yet. Create your first one!'}
+          </p>
         </div>
       )}
 
