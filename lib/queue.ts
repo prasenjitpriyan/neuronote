@@ -33,6 +33,6 @@ export async function addNoteJob(noteId: string) {
   return noteQueue.add(
     'process-note',
     { noteId },
-    { jobId: `note-${noteId}` } // deduplicate: one active job per note
+    { jobId: `note-${noteId}-${Date.now()}` }
   );
 }

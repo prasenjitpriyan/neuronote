@@ -7,12 +7,6 @@ import {
 import { prisma } from '../lib/prisma';
 import { redisConnection } from '../lib/queue';
 
-// ─── SSE Event Emitter (in-process for single instance) ─────────────────────
-// In a multi-instance setup, replace this with a Redis pub/sub channel
-import { EventEmitter } from 'events';
-export const sseEmitter = new EventEmitter();
-sseEmitter.setMaxListeners(1000);
-
 // ─── Worker ───────────────────────────────────────────────────────────────────
 const worker = new Worker(
   'note-ai-processing',
@@ -69,7 +63,10 @@ const worker = new Worker(
     console.log(`[worker] ✅ Note ${noteId} complete`);
 
     // ── Notify SSE clients ────────────────────────────────────────────────────
-    sseEmitter.emit(`note:${noteId}`, { summary, tags, status: 'completed' });
+    redisConnection.publish(
+      `note:${noteId}`,
+      JSON.stringify({ summary, tags, status: 'completed' })
+    );
   },
   {
     // @ts-expect-error bullmq and ioredis type mismatch
@@ -91,10 +88,13 @@ worker.on('failed', async (job, err) => {
     },
   });
 
-  sseEmitter.emit(`note:${noteId}`, {
-    status: 'failed',
-    error: err.message,
-  });
+  redisConnection.publish(
+    `note:${noteId}`,
+    JSON.stringify({
+      status: 'failed',
+      error: err.message,
+    })
+  );
 });
 
 worker.on('ready', () => console.log('[worker] 🟢 Worker ready'));

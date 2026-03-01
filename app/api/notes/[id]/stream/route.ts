@@ -1,6 +1,6 @@
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
-import { sseEmitter } from '@/worker/noteWorker';
+import Redis from 'ioredis';
 import { getServerSession } from 'next-auth';
 import { NextRequest } from 'next/server';
 
@@ -26,8 +26,14 @@ export async function GET(
     return new Response('Not found', { status: 404 });
   }
 
+  // Redis instance for subscription
+  const subscriber = new Redis(
+    process.env.REDIS_URL ?? 'redis://localhost:6379',
+    { tls: process.env.REDIS_URL?.startsWith('rediss://') ? {} : undefined }
+  );
+
   const stream = new ReadableStream({
-    start(controller) {
+    async start(controller) {
       // If already completed, send immediately and close
       if (note.status === 'completed') {
         const data = JSON.stringify({
@@ -37,27 +43,34 @@ export async function GET(
         });
         controller.enqueue(`data: ${data}\n\n`);
         controller.close();
+        await subscriber.quit();
         return;
       }
 
+      await subscriber.subscribe(`note:${id}`);
+
       const encoder = new TextEncoder();
 
-      const listener = (payload: Record<string, unknown>) => {
-        const data = JSON.stringify(payload);
-        controller.enqueue(encoder.encode(`data: ${data}\n\n`));
-        // Close stream after receiving terminal event
-        if (payload.status === 'completed' || payload.status === 'failed') {
-          sseEmitter.off(`note:${id}`, listener);
-          controller.close();
-        }
-      };
+      subscriber.on('message', (channel, message) => {
+        if (channel === `note:${id}`) {
+          const payload = JSON.parse(message);
+          controller.enqueue(encoder.encode(`data: ${message}\n\n`));
 
-      sseEmitter.on(`note:${id}`, listener);
+          if (payload.status === 'completed' || payload.status === 'failed') {
+            subscriber.unsubscribe(`note:${id}`).finally(() => {
+              subscriber.quit();
+              controller.close();
+            });
+          }
+        }
+      });
 
       // Clean up if client disconnects
       _req.signal.addEventListener('abort', () => {
-        sseEmitter.off(`note:${id}`, listener);
-        controller.close();
+        subscriber.unsubscribe(`note:${id}`).finally(() => {
+          subscriber.quit();
+          controller.close();
+        });
       });
     },
   });
