@@ -98,9 +98,9 @@ export default function NotFound() {
             Lost your train of thought?
           </h1>
           <p className="text-zinc-400 mb-10 leading-relaxed text-sm">
-            We couldn't find the page you're looking for. It might have been
-            deleted, moved, or never existed in your neural network layout in
-            the first place.
+            We couldn&apos;t find the page you&apos;re looking for. It might
+            have been deleted, moved, or never existed in your neural network
+            layout in the first place.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
