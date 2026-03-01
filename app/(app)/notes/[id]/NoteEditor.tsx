@@ -2,6 +2,7 @@
 
 import { SaveStatus, useAutosave } from '@/hooks/useAutosave';
 import { useNoteStream } from '@/hooks/useNoteStream';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 
 interface NoteEditorProps {
@@ -54,7 +55,11 @@ export default function NoteEditor({ note }: NoteEditorProps) {
   return (
     <div className="flex flex-col xl:flex-row h-full overflow-y-auto xl:overflow-hidden">
       {/* Editor area */}
-      <div className="flex-1 flex flex-col p-4 sm:p-8 max-w-2xl mx-auto w-full min-h-[500px] xl:min-h-0 xl:overflow-y-auto shrink-0 xl:shrink">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="flex-1 flex flex-col p-4 sm:p-8 max-w-2xl mx-auto w-full min-h-[500px] xl:min-h-0 xl:overflow-y-auto shrink-0 xl:shrink">
         {/* Status bar */}
         <div className="flex items-center justify-between mb-6">
           <span
@@ -98,10 +103,14 @@ export default function NoteEditor({ note }: NoteEditorProps) {
           className="flex-1 w-full bg-transparent text-zinc-300 placeholder-zinc-700 outline-none resize-none text-sm leading-7 border-none min-h-[300px] xl:min-h-0"
           autoFocus
         />
-      </div>
+      </motion.div>
 
       {/* AI panel */}
-      <aside className="w-full xl:w-72 shrink-0 border-t xl:border-t-0 xl:border-l border-zinc-800 p-4 sm:p-6 space-y-6 overflow-y-auto">
+      <motion.aside
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="w-full xl:w-72 shrink-0 border-t xl:border-t-0 xl:border-l border-zinc-800 p-4 sm:p-6 space-y-6 overflow-y-auto">
         <div>
           <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-3">
             AI Summary
@@ -135,15 +144,20 @@ export default function NoteEditor({ note }: NoteEditorProps) {
             Tags
           </h3>
           {displayTags.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {displayTags.map((tag) => (
-                <span
-                  key={tag}
-                  className="text-xs bg-zinc-800 text-zinc-400 px-2 py-1 rounded-md">
-                  #{tag}
-                </span>
-              ))}
-            </div>
+            <motion.div layout className="flex flex-wrap gap-2">
+              <AnimatePresence>
+                {displayTags.map((tag) => (
+                  <motion.span
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.8, opacity: 0 }}
+                    key={tag}
+                    className="text-xs bg-zinc-800 text-zinc-400 px-2 py-1 rounded-md">
+                    #{tag}
+                  </motion.span>
+                ))}
+              </AnimatePresence>
+            </motion.div>
           ) : (
             <div className="flex gap-2">
               {[1, 2, 3].map((i) => (
@@ -165,7 +179,7 @@ export default function NoteEditor({ note }: NoteEditorProps) {
             </p>
           </div>
         )}
-      </aside>
+      </motion.aside>
     </div>
   );
 }

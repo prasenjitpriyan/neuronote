@@ -1,4 +1,10 @@
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import {
+  FadeIn,
+  SlideUp,
+  StaggerContainer,
+  StaggerItem,
+} from '@/components/motion/MotionWrappers';
 import { prisma } from '@/lib/prisma';
 import { Prisma } from '@prisma/client';
 import { getServerSession } from 'next-auth';
@@ -106,43 +112,52 @@ export default async function NotesPage({
     <div className="p-4 sm:p-8 max-w-3xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
-        <div>
+        <SlideUp>
           <h1 className="text-2xl font-bold text-white">Your notes</h1>
           <p className="text-sm text-zinc-500 mt-1">
             {notes.length} note{notes.length !== 1 ? 's' : ''}
           </p>
-        </div>
-        <form action={createNoteWithUser}>
-          <button
-            type="submit"
-            className="bg-white text-black text-sm font-semibold px-4 py-2 rounded-xl hover:bg-zinc-100 transition-colors">
-            + New note
-          </button>
-        </form>
+        </SlideUp>
+        <SlideUp delay={0.1}>
+          <form action={createNoteWithUser}>
+            <button
+              type="submit"
+              className="bg-white text-black text-sm font-semibold px-4 py-2 rounded-xl hover:bg-zinc-100 transition-colors">
+              + New note
+            </button>
+          </form>
+        </SlideUp>
       </div>
 
-      <SearchNotes availableTags={availableTags} />
+      <FadeIn delay={0.2}>
+        <SearchNotes availableTags={availableTags} />
+      </FadeIn>
 
       {/* Empty state */}
       {notes.length === 0 && (
-        <div className="text-center py-24 text-zinc-600">
-          <p className="text-4xl mb-3">📝</p>
-          <p className="text-sm">
-            {q ||
-            (tagFilter && tagFilter !== 'all') ||
-            (statusFilter && statusFilter !== 'all')
-              ? 'No notes match your search criteria.'
-              : 'No notes yet. Create your first one!'}
-          </p>
-        </div>
+        <FadeIn delay={0.3}>
+          <div className="text-center py-24 text-zinc-600">
+            <p className="text-4xl mb-3">📝</p>
+            <p className="text-sm">
+              {q ||
+              (tagFilter && tagFilter !== 'all') ||
+              (statusFilter && statusFilter !== 'all')
+                ? 'No notes match your search criteria.'
+                : 'No notes yet. Create your first one!'}
+            </p>
+          </div>
+        </FadeIn>
       )}
 
       {/* Notes grid */}
-      <ul className="space-y-3">
+      <StaggerContainer
+        className="space-y-3"
+        delayChildren={0.3}
+        staggerChildren={0.05}>
         {notes.map((note: NoteListItem) => {
           const sc = statusConfig[note.status];
           return (
-            <li key={note.id}>
+            <StaggerItem key={note.id}>
               <Link
                 href={`/notes/${note.id}`}
                 className="block bg-zinc-900 border border-zinc-800 rounded-xl p-5 hover:border-zinc-600 transition-colors group">
@@ -182,10 +197,10 @@ export default async function NotesPage({
                   }).format(new Date(note.updatedAt))}
                 </p>
               </Link>
-            </li>
+            </StaggerItem>
           );
         })}
-      </ul>
+      </StaggerContainer>
     </div>
   );
 }

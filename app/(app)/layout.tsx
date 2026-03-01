@@ -1,4 +1,5 @@
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { SlideIn } from '@/components/motion/MotionWrappers';
 import { getServerSession } from 'next-auth';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -14,7 +15,11 @@ export default async function AppLayout({
   return (
     <div className="flex flex-col md:flex-row h-screen bg-zinc-950 text-white overflow-hidden">
       {/* Sidebar / Header */}
-      <aside className="w-full md:w-64 shrink-0 border-b md:border-b-0 md:border-r border-zinc-800 flex flex-row md:flex-col items-center md:items-stretch justify-between">
+      <SlideIn
+        direction="left"
+        distance={20}
+        duration={0.6}
+        className="w-full md:w-64 shrink-0 border-b md:border-b-0 md:border-r border-zinc-800 flex flex-row md:flex-col items-center md:items-stretch justify-between z-10 bg-zinc-950">
         <div className="p-4 md:p-5 md:border-b border-zinc-800 flex items-center">
           <Link
             href="/notes"
@@ -56,7 +61,7 @@ export default async function AppLayout({
             ↩
           </Link>
         </div>
-      </aside>
+      </SlideIn>
 
       {/* Main content */}
       <main className="flex-1 overflow-auto">{children}</main>
