@@ -1,19 +1,12 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
-  provider   = "postgresql"
-  url        = env("DATABASE_URL")
-  directUrl  = env("DIRECT_DATABASE_URL")
-  extensions = [pgvector(map: "vector")]
+  provider = "postgresql"
+  url      = "postgresql://neondb_owner:npg_L1Xmh6JlEYok@ep-raspy-cake-aigyakp0-pooler.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require"
 }
-
-// ─── NextAuth Models ──────────────────────────────────────────────────────────
 
 model User {
   id            String    @id @default(cuid())
@@ -23,10 +16,9 @@ model User {
   image         String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-
-  accounts Account[]
-  sessions Session[]
-  notes    Note[]
+  accounts      Account[]
+  notes         Note[]
+  sessions      Session[]
 }
 
 model Account {
@@ -35,15 +27,14 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -53,8 +44,7 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
@@ -65,31 +55,28 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// ─── App Models ───────────────────────────────────────────────────────────────
+model Note {
+  id           String                 @id @default(cuid())
+  userId       String
+  title        String                 @default("Untitled")
+  content      String
+  summary      String?
+  tags         String[]               @default([])
+  embedding    Unsupported("vector")?
+  status       NoteStatus             @default(pending)
+  errorMessage String?
+  tokenCount   Int?
+  createdAt    DateTime               @default(now())
+  updatedAt    DateTime               @updatedAt
+  user         User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+}
 
 enum NoteStatus {
   pending
   processing
   completed
   failed
-}
-
-model Note {
-  id           String     @id @default(cuid())
-  userId       String
-  title        String     @default("Untitled")
-  content      String     @db.Text
-  summary      String?    @db.Text
-  tags         String[]   @default([])
-  embedding    Unsupported("vector(3072)")?
-  status       NoteStatus @default(pending)
-  errorMessage String?
-  tokenCount   Int?
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([status])
 }
