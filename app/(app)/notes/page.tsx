@@ -1,4 +1,5 @@
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import DeleteNoteButton from '@/components/DeleteNoteButton';
 import { AnimatedDivider } from '@/components/motion/AnimatedDivider';
 import {
   FadeIn,
@@ -167,45 +168,55 @@ export default async function NotesPage({
           const sc = statusConfig[note.status];
           return (
             <StaggerItem key={note.id}>
-              <Link
-                href={`/notes/${note.id}`}
-                className="block bg-zinc-900 border border-zinc-800 rounded-xl p-5 hover:border-zinc-600 transition-colors group">
-                <div className="flex items-start justify-between gap-3">
-                  <h2 className="text-sm font-semibold text-white group-hover:text-emerald-300 transition-colors line-clamp-1">
-                    {note.title || 'Untitled'}
-                  </h2>
-                  <span
-                    className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${sc.className}`}>
-                    {sc.label}
-                  </span>
+              <div className="group relative block bg-zinc-900 border border-zinc-800 rounded-xl p-5 hover:border-zinc-600 transition-colors">
+                <Link
+                  href={`/notes/${note.id}`}
+                  className="absolute inset-0 z-0 rounded-xl focus:outline-none"
+                  aria-label={`View note ${note.title || 'Untitled'}`}
+                />
+                <div className="relative z-10 flex items-start justify-between gap-3 pointer-events-none">
+                  <div className="flex-1">
+                    <h2 className="text-sm font-semibold text-white group-hover:text-emerald-300 transition-colors line-clamp-1">
+                      {note.title || 'Untitled'}
+                    </h2>
+                  </div>
+                  <div className="flex items-center gap-2 pointer-events-auto">
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${sc.className}`}>
+                      {sc.label}
+                    </span>
+                    <DeleteNoteButton noteId={note.id} />
+                  </div>
                 </div>
 
-                {note.summary && (
-                  <p className="text-xs text-zinc-500 mt-2 line-clamp-2 leading-relaxed">
-                    {note.summary}
-                  </p>
-                )}
-                {note.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 mt-3">
-                    {note.tags.map((tag: string) => (
-                      <span
-                        key={tag}
-                        className="text-xs bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded-md">
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
+                <div className="relative z-10 pointer-events-none">
+                  {note.summary && (
+                    <p className="text-xs text-zinc-500 mt-2 line-clamp-2 leading-relaxed">
+                      {note.summary}
+                    </p>
+                  )}
+                  {note.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mt-3">
+                      {note.tags.map((tag: string) => (
+                        <span
+                          key={tag}
+                          className="text-xs bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded-md">
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
 
-                <p className="text-xs text-zinc-600 mt-3">
-                  {new Intl.DateTimeFormat('en', {
-                    month: 'short',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  }).format(new Date(note.updatedAt))}
-                </p>
-              </Link>
+                  <p className="text-xs text-zinc-600 mt-3">
+                    {new Intl.DateTimeFormat('en', {
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    }).format(new Date(note.updatedAt))}
+                  </p>
+                </div>
+              </div>
               {/* Animated Divider replacing existing layout lines or adding them uniformly */}
               <AnimatedDivider className="mt-6 mb-2" />
             </StaggerItem>

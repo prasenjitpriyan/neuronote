@@ -1,4 +1,5 @@
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import DeleteNoteButton from '@/components/DeleteNoteButton';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import Link from 'next/link';
@@ -32,12 +33,13 @@ export default async function NotePage({
   return (
     <div className="flex flex-col h-full">
       {/* Top bar */}
-      <div className="border-b border-zinc-800 px-4 sm:px-6 py-3 flex items-center gap-4">
+      <div className="border-b border-zinc-800 px-4 sm:px-6 py-3 flex items-center justify-between">
         <Link
           href="/notes"
           className="text-xs text-zinc-500 hover:text-white transition-colors">
           ← All notes
         </Link>
+        <DeleteNoteButton noteId={note.id} redirectToNotesList={true} />
       </div>
 
       {/* Editor fills remaining height */}
